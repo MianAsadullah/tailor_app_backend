@@ -26,8 +26,23 @@ let PaymentsController = class PaymentsController {
     create(dto) {
         return this.paymentsService.create(dto);
     }
+    createIntent(orderId, amount, method) {
+        return this.paymentsService.createIntent(orderId, amount, method);
+    }
+    confirm(transactionId) {
+        return this.paymentsService.confirm(transactionId);
+    }
     findByOrder(orderId) {
         return this.paymentsService.findByOrder(orderId);
+    }
+    analytics() {
+        return this.paymentsService.analytics();
+    }
+    refund(transactionId) {
+        return this.paymentsService.refund(transactionId);
+    }
+    earningsForTailor(tailorId) {
+        return this.paymentsService.earningsForTailor(tailorId);
     }
     webhook(dto) {
         return this.paymentsService.handleWebhook(dto);
@@ -46,12 +61,58 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('create-intent'),
+    __param(0, (0, common_1.Body)('orderId')),
+    __param(1, (0, common_1.Body)('amount')),
+    __param(2, (0, common_1.Body)('method')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Number, String]),
+    __metadata("design:returntype", void 0)
+], PaymentsController.prototype, "createIntent", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('confirm'),
+    __param(0, (0, common_1.Body)('transactionId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], PaymentsController.prototype, "confirm", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('order/:orderId'),
     __param(0, (0, common_1.Param)('orderId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], PaymentsController.prototype, "findByOrder", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('analytics'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], PaymentsController.prototype, "analytics", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('refund'),
+    __param(0, (0, common_1.Body)('transactionId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], PaymentsController.prototype, "refund", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('earnings/tailor/:tailorId'),
+    __param(0, (0, common_1.Param)('tailorId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], PaymentsController.prototype, "earningsForTailor", null);
 __decorate([
     (0, common_1.Post)('webhook'),
     __param(0, (0, common_1.Body)()),

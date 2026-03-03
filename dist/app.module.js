@@ -19,6 +19,9 @@ const measurements_module_1 = require("./modules/measurements/measurements.modul
 const orders_module_1 = require("./modules/orders/orders.module");
 const payments_module_1 = require("./modules/payments/payments.module");
 const notifications_module_1 = require("./modules/notifications/notifications.module");
+const analytics_module_1 = require("./modules/analytics/analytics.module");
+const system_controller_1 = require("./modules/system/system.controller");
+const upload_controller_1 = require("./modules/upload/upload.controller");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -39,7 +42,9 @@ exports.AppModule = AppModule = __decorate([
             orders_module_1.OrdersModule,
             payments_module_1.PaymentsModule,
             notifications_module_1.NotificationsModule,
+            analytics_module_1.AnalyticsModule,
         ],
+        controllers: [system_controller_1.SystemController, upload_controller_1.UploadController],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

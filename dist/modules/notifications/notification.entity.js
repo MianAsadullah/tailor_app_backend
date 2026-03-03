@@ -39,6 +39,10 @@ __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], Notification.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)(),
+    __metadata("design:type", Object)
+], Notification.prototype, "deletedAt", void 0);
 exports.Notification = Notification = __decorate([
     (0, typeorm_1.Entity)({ name: 'notifications' })
 ], Notification);

@@ -1,6 +1,7 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -31,10 +32,31 @@ export class User {
   @Column({ default: true })
   isActive!: boolean;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  passwordResetToken!: string | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  passwordResetExpiresAt!: Date | null;
+
+  @Column({ default: false })
+  isEmailVerified!: boolean;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  emailVerificationToken!: string | null;
+
+  @Column({ default: false })
+  twoFactorEnabled!: boolean;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  twoFactorSecret!: string | null;
+
   @CreateDateColumn()
   createdAt!: Date;
 
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @DeleteDateColumn()
+  deletedAt!: Date | null;
 }
 

@@ -18,10 +18,23 @@ const swagger_1 = require("@nestjs/swagger");
 const measurements_service_1 = require("./measurements.service");
 const create_measurement_dto_1 = require("./dto/create-measurement.dto");
 const update_measurement_dto_1 = require("./dto/update-measurement.dto");
+const from_template_dto_1 = require("./dto/from-template.dto");
 const jwt_auth_guard_1 = require("../../middlewares/jwt-auth.guard");
 let MeasurementsController = class MeasurementsController {
     constructor(measurementsService) {
         this.measurementsService = measurementsService;
+    }
+    getTemplates() {
+        return this.measurementsService.getTemplates();
+    }
+    duplicate(id) {
+        return this.measurementsService.duplicate(id);
+    }
+    fromTemplate(dto) {
+        return this.measurementsService.createFromTemplate(dto);
+    }
+    findByCustomer(customerId) {
+        return this.measurementsService.findByCustomer(customerId);
     }
     create(dto) {
         return this.measurementsService.create(dto);
@@ -40,6 +53,33 @@ let MeasurementsController = class MeasurementsController {
     }
 };
 exports.MeasurementsController = MeasurementsController;
+__decorate([
+    (0, common_1.Get)('templates'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], MeasurementsController.prototype, "getTemplates", null);
+__decorate([
+    (0, common_1.Post)(':id/duplicate'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], MeasurementsController.prototype, "duplicate", null);
+__decorate([
+    (0, common_1.Post)('from-template'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [from_template_dto_1.FromTemplateDto]),
+    __metadata("design:returntype", void 0)
+], MeasurementsController.prototype, "fromTemplate", null);
+__decorate([
+    (0, common_1.Get)('customer/:customerId'),
+    __param(0, (0, common_1.Param)('customerId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], MeasurementsController.prototype, "findByCustomer", null);
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),

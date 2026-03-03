@@ -18,4 +18,5 @@ export declare class Order {
     isPaid: boolean;
     createdAt: Date;
     updatedAt: Date;
+    deletedAt: Date | null;
 }

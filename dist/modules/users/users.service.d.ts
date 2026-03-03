@@ -11,8 +11,15 @@ export declare class UsersService {
         phone: string | null;
         role: import("./user.entity").UserRole;
         isActive: boolean;
+        passwordResetToken: string | null;
+        passwordResetExpiresAt: Date | null;
+        isEmailVerified: boolean;
+        emailVerificationToken: string | null;
+        twoFactorEnabled: boolean;
+        twoFactorSecret: string | null;
         createdAt: Date;
         updatedAt: Date;
+        deletedAt: Date | null;
     }[]>;
     findOne(id: string): Promise<{
         id: string;
@@ -21,8 +28,15 @@ export declare class UsersService {
         phone: string | null;
         role: import("./user.entity").UserRole;
         isActive: boolean;
+        passwordResetToken: string | null;
+        passwordResetExpiresAt: Date | null;
+        isEmailVerified: boolean;
+        emailVerificationToken: string | null;
+        twoFactorEnabled: boolean;
+        twoFactorSecret: string | null;
         createdAt: Date;
         updatedAt: Date;
+        deletedAt: Date | null;
     }>;
     update(id: string, dto: UpdateUserDto): Promise<{
         id: string;
@@ -31,11 +45,74 @@ export declare class UsersService {
         phone: string | null;
         role: import("./user.entity").UserRole;
         isActive: boolean;
+        passwordResetToken: string | null;
+        passwordResetExpiresAt: Date | null;
+        isEmailVerified: boolean;
+        emailVerificationToken: string | null;
+        twoFactorEnabled: boolean;
+        twoFactorSecret: string | null;
         createdAt: Date;
         updatedAt: Date;
+        deletedAt: Date | null;
     }>;
     remove(id: string): Promise<{
         success: boolean;
     }>;
+    updateRole(id: string, role: User['role']): Promise<{
+        id: string;
+        name: string;
+        email: string;
+        phone: string | null;
+        role: import("./user.entity").UserRole;
+        isActive: boolean;
+        passwordResetToken: string | null;
+        passwordResetExpiresAt: Date | null;
+        isEmailVerified: boolean;
+        emailVerificationToken: string | null;
+        twoFactorEnabled: boolean;
+        twoFactorSecret: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+    }>;
+    updateStatus(id: string, isActive: boolean): Promise<{
+        id: string;
+        name: string;
+        email: string;
+        phone: string | null;
+        role: import("./user.entity").UserRole;
+        isActive: boolean;
+        passwordResetToken: string | null;
+        passwordResetExpiresAt: Date | null;
+        isEmailVerified: boolean;
+        emailVerificationToken: string | null;
+        twoFactorEnabled: boolean;
+        twoFactorSecret: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+    }>;
+    stats(): Promise<{
+        total: number;
+        active: number;
+        byRole: any[];
+    }>;
+    activityLog(): Promise<{
+        id: string;
+        name: string;
+        email: string;
+        phone: string | null;
+        role: import("./user.entity").UserRole;
+        isActive: boolean;
+        passwordResetToken: string | null;
+        passwordResetExpiresAt: Date | null;
+        isEmailVerified: boolean;
+        emailVerificationToken: string | null;
+        twoFactorEnabled: boolean;
+        twoFactorSecret: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+    }[]>;
     private toSafeUser;
 }

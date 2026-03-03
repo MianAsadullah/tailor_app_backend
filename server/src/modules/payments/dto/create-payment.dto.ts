@@ -22,8 +22,8 @@ export class CreatePaymentDto {
   @IsNumber()
   amount!: number;
 
-  @ApiProperty({ enum: ['cash', 'stripe', 'jazzcash'] })
-  @IsEnum(['cash', 'stripe', 'jazzcash'])
+  @ApiProperty({ enum: ['cash', 'stripe', 'jazzcash', 'easypaisa'] })
+  @IsEnum(['cash', 'stripe', 'jazzcash', 'easypaisa'])
   method!: PaymentMethod;
 
   @ApiProperty({ required: false })

@@ -7,4 +7,17 @@ export declare class NotificationsService {
     markAsRead(id: string, userId: string): Promise<{
         success: boolean;
     }>;
+    markAllAsRead(userId: string): Promise<{
+        success: boolean;
+    }>;
+    delete(id: string, userId: string): Promise<{
+        success: boolean;
+    }>;
+    send(userId: string, title: string, message: string): Promise<Notification>;
+    unreadCount(userId: string): Promise<{
+        count: number;
+    }>;
+    broadcast(title: string, message: string): Promise<{
+        success: boolean;
+    }>;
 }

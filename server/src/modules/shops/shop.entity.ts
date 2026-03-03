@@ -1,8 +1,11 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
+  ManyToMany,
   ManyToOne,
+  JoinTable,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../users/user.entity';
@@ -30,7 +33,17 @@ export class Shop {
   @Column({ default: true })
   isActive!: boolean;
 
+  @Column({ type: 'jsonb', nullable: true })
+  settings!: Record<string, unknown> | null;
+
+  @ManyToMany(() => User)
+  @JoinTable({ name: 'shop_members' })
+  members!: User[];
+
   @CreateDateColumn()
   createdAt!: Date;
+
+  @DeleteDateColumn()
+  deletedAt!: Date | null;
 }
 

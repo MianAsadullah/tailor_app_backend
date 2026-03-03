@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const user_entity_1 = require("../users/user.entity");
 const jwt_1 = require("../../utils/jwt");
 let AuthService = class AuthService {
@@ -32,6 +33,7 @@ let AuthService = class AuthService {
             throw new common_1.BadRequestException('Email already in use');
         }
         const passwordHash = await bcrypt.hash(dto.password, 10);
+        const emailVerificationToken = crypto.randomBytes(32).toString('hex');
         const user = this.usersRepo.create({
             name: dto.name,
             email: dto.email,
@@ -39,6 +41,8 @@ let AuthService = class AuthService {
             passwordHash,
             role: (_b = dto.role) !== null && _b !== void 0 ? _b : 'customer',
             isActive: true,
+            isEmailVerified: false,
+            emailVerificationToken,
         });
         const saved = await this.usersRepo.save(user);
         const token = (0, jwt_1.signToken)({ sub: saved.id, role: saved.role });
@@ -71,6 +75,118 @@ let AuthService = class AuthService {
             token,
             user: this.toSafeUser(user),
         };
+    }
+    async refreshToken(userId) {
+        const user = await this.usersRepo.findOne({ where: { id: userId } });
+        if (!user) {
+            throw new common_1.NotFoundException('User not found');
+        }
+        const token = (0, jwt_1.signToken)({ sub: user.id, role: user.role });
+        return { token };
+    }
+    async forgotPassword(dto) {
+        if (!dto.email && !dto.phone) {
+            throw new common_1.BadRequestException('Email or phone is required');
+        }
+        const user = await this.usersRepo.findOne({
+            where: dto.email ? { email: dto.email } : { phone: dto.phone },
+        });
+        if (!user) {
+            return { success: true };
+        }
+        const token = crypto.randomBytes(32).toString('hex');
+        user.passwordResetToken = token;
+        user.passwordResetExpiresAt = new Date(Date.now() + 60 * 60 * 1000);
+        await this.usersRepo.save(user);
+        return { success: true, resetToken: token };
+    }
+    async resetPassword(dto) {
+        const user = await this.usersRepo.findOne({
+            where: { passwordResetToken: dto.token },
+        });
+        if (!user ||
+            !user.passwordResetExpiresAt ||
+            user.passwordResetExpiresAt.getTime() < Date.now()) {
+            throw new common_1.BadRequestException('Invalid or expired reset token');
+        }
+        const passwordHash = await bcrypt.hash(dto.newPassword, 10);
+        user.passwordHash = passwordHash;
+        user.passwordResetToken = null;
+        user.passwordResetExpiresAt = null;
+        await this.usersRepo.save(user);
+        return { success: true };
+    }
+    async verifyEmail(token) {
+        const user = await this.usersRepo.findOne({
+            where: { emailVerificationToken: token },
+        });
+        if (!user) {
+            throw new common_1.BadRequestException('Invalid verification token');
+        }
+        user.isEmailVerified = true;
+        user.emailVerificationToken = null;
+        await this.usersRepo.save(user);
+        return { success: true };
+    }
+    async resendVerification(userId) {
+        const user = await this.usersRepo.findOne({ where: { id: userId } });
+        if (!user) {
+            throw new common_1.NotFoundException('User not found');
+        }
+        if (user.isEmailVerified) {
+            return { success: true };
+        }
+        const token = crypto.randomBytes(32).toString('hex');
+        user.emailVerificationToken = token;
+        await this.usersRepo.save(user);
+        return { success: true, verificationToken: token };
+    }
+    async enableTwoFactor(userId) {
+        const user = await this.usersRepo.findOne({ where: { id: userId } });
+        if (!user) {
+            throw new common_1.NotFoundException('User not found');
+        }
+        const secret = crypto.randomBytes(20).toString('hex');
+        user.twoFactorSecret = secret;
+        user.twoFactorEnabled = false;
+        await this.usersRepo.save(user);
+        return { success: true, secret };
+    }
+    async verifyTwoFactor(userId, code) {
+        const user = await this.usersRepo.findOne({ where: { id: userId } });
+        if (!user || !user.twoFactorSecret) {
+            throw new common_1.BadRequestException('2FA not initialized');
+        }
+        if (!code) {
+            throw new common_1.BadRequestException('Invalid 2FA code');
+        }
+        user.twoFactorEnabled = true;
+        await this.usersRepo.save(user);
+        return { success: true };
+    }
+    async disableTwoFactor(userId) {
+        const user = await this.usersRepo.findOne({ where: { id: userId } });
+        if (!user) {
+            throw new common_1.NotFoundException('User not found');
+        }
+        user.twoFactorEnabled = false;
+        user.twoFactorSecret = null;
+        await this.usersRepo.save(user);
+        return { success: true };
+    }
+    async changePassword(userId, dto) {
+        const user = await this.usersRepo.findOne({ where: { id: userId } });
+        if (!user) {
+            throw new common_1.NotFoundException('User not found');
+        }
+        const isValid = await bcrypt.compare(dto.oldPassword, user.passwordHash);
+        if (!isValid) {
+            throw new common_1.UnauthorizedException('Old password is incorrect');
+        }
+        const passwordHash = await bcrypt.hash(dto.newPassword, 10);
+        user.passwordHash = passwordHash;
+        await this.usersRepo.save(user);
+        return { success: true };
     }
     async getMe(userId) {
         const user = await this.usersRepo.findOne({ where: { id: userId } });

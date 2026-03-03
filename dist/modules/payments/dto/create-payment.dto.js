@@ -31,8 +31,8 @@ __decorate([
     __metadata("design:type", Number)
 ], CreatePaymentDto.prototype, "amount", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ enum: ['cash', 'stripe', 'jazzcash'] }),
-    (0, class_validator_1.IsEnum)(['cash', 'stripe', 'jazzcash']),
+    (0, swagger_1.ApiProperty)({ enum: ['cash', 'stripe', 'jazzcash', 'easypaisa'] }),
+    (0, class_validator_1.IsEnum)(['cash', 'stripe', 'jazzcash', 'easypaisa']),
     __metadata("design:type", String)
 ], CreatePaymentDto.prototype, "method", void 0);
 __decorate([

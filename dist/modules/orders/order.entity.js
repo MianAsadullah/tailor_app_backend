@@ -77,6 +77,10 @@ __decorate([
     (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
 ], Order.prototype, "updatedAt", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)(),
+    __metadata("design:type", Object)
+], Order.prototype, "deletedAt", void 0);
 exports.Order = Order = __decorate([
     (0, typeorm_1.Entity)({ name: 'orders' })
 ], Order);

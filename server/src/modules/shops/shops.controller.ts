@@ -45,5 +45,36 @@ export class ShopsController {
   remove(@Param('id') id: string) {
     return this.shopsService.remove(id);
   }
+
+  @Get(':id/analytics')
+  analytics(@Param('id') id: string) {
+    return this.shopsService.analytics(id);
+  }
+
+  @Patch(':id/settings')
+  updateSettings(
+    @Param('id') id: string,
+    @Body() settings: Record<string, unknown>,
+  ) {
+    return this.shopsService.updateSettings(id, settings);
+  }
+
+  @Post(':id/invite-tailor')
+  inviteTailor(
+    @Param('id') id: string,
+    @Body('tailorId') tailorId: string,
+  ) {
+    return this.shopsService.inviteTailor(id, tailorId);
+  }
+
+  @Get(':id/members')
+  members(@Param('id') id: string) {
+    return this.shopsService.members(id);
+  }
+
+  @Delete(':id/members/:userId')
+  removeMember(@Param('id') id: string, @Param('userId') userId: string) {
+    return this.shopsService.removeMember(id, userId);
+  }
 }
 

@@ -7,5 +7,8 @@ export declare class Shop {
     city: string;
     logoUrl: string | null;
     isActive: boolean;
+    settings: Record<string, unknown> | null;
+    members: User[];
     createdAt: Date;
+    deletedAt: Date | null;
 }

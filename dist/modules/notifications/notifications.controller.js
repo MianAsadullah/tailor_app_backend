@@ -31,6 +31,27 @@ let NotificationsController = class NotificationsController {
         const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
         return this.notificationsService.markAsRead(id, userId);
     }
+    markAll(req) {
+        var _a;
+        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+        return this.notificationsService.markAllAsRead(userId);
+    }
+    remove(id, req) {
+        var _a;
+        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+        return this.notificationsService.delete(id, userId);
+    }
+    send(req, userId, title, message) {
+        return this.notificationsService.send(userId, title, message);
+    }
+    unreadCount(req) {
+        var _a;
+        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+        return this.notificationsService.unreadCount(userId);
+    }
+    broadcast(req, title, message) {
+        return this.notificationsService.broadcast(title, message);
+    }
 };
 exports.NotificationsController = NotificationsController;
 __decorate([
@@ -48,6 +69,47 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], NotificationsController.prototype, "markRead", null);
+__decorate([
+    (0, common_1.Patch)('read-all'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], NotificationsController.prototype, "markAll", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], NotificationsController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Post)('send'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)('userId')),
+    __param(2, (0, common_1.Body)('title')),
+    __param(3, (0, common_1.Body)('message')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String, String]),
+    __metadata("design:returntype", void 0)
+], NotificationsController.prototype, "send", null);
+__decorate([
+    (0, common_1.Get)('unread-count'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], NotificationsController.prototype, "unreadCount", null);
+__decorate([
+    (0, common_1.Post)('broadcast'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)('title')),
+    __param(2, (0, common_1.Body)('message')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String]),
+    __metadata("design:returntype", void 0)
+], NotificationsController.prototype, "broadcast", null);
 exports.NotificationsController = NotificationsController = __decorate([
     (0, swagger_1.ApiTags)('notifications'),
     (0, swagger_1.ApiBearerAuth)(),

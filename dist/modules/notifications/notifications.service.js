@@ -38,6 +38,42 @@ let NotificationsService = class NotificationsService {
         await this.notificationsRepo.save(notification);
         return { success: true };
     }
+    async markAllAsRead(userId) {
+        await this.notificationsRepo.update({ user: { id: userId }, isRead: false }, { isRead: true });
+        return { success: true };
+    }
+    async delete(id, userId) {
+        const result = await this.notificationsRepo.softDelete({
+            id,
+            user: { id: userId },
+        });
+        return { success: !!result.affected };
+    }
+    async send(userId, title, message) {
+        const notification = this.notificationsRepo.create({
+            user: { id: userId },
+            title,
+            message,
+            isRead: false,
+        });
+        return this.notificationsRepo.save(notification);
+    }
+    async unreadCount(userId) {
+        const count = await this.notificationsRepo.count({
+            where: { user: { id: userId }, isRead: false },
+        });
+        return { count };
+    }
+    async broadcast(title, message) {
+        const systemNotification = this.notificationsRepo.create({
+            user: null,
+            title,
+            message,
+            isRead: false,
+        });
+        await this.notificationsRepo.save(systemNotification);
+        return { success: true };
+    }
 };
 exports.NotificationsService = NotificationsService;
 exports.NotificationsService = NotificationsService = __decorate([

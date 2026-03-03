@@ -17,4 +17,5 @@ export declare class Measurement {
     gender: Gender;
     measurements: MeasurementValues;
     createdAt: Date;
+    deletedAt: Date | null;
 }

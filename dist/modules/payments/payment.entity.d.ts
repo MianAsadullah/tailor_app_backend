@@ -1,6 +1,6 @@
 import { Order } from '../orders/order.entity';
 import { User } from '../users/user.entity';
-export type PaymentMethod = 'cash' | 'stripe' | 'jazzcash';
+export type PaymentMethod = 'cash' | 'stripe' | 'jazzcash' | 'easypaisa';
 export type PaymentStatus = 'pending' | 'paid' | 'failed';
 export declare class Payment {
     id: string;
@@ -11,4 +11,5 @@ export declare class Payment {
     status: PaymentStatus;
     transactionId: string | null;
     createdAt: Date;
+    deletedAt: Date | null;
 }
