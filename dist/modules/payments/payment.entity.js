@@ -48,6 +48,10 @@ __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], Payment.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)(),
+    __metadata("design:type", Object)
+], Payment.prototype, "deletedAt", void 0);
 exports.Payment = Payment = __decorate([
     (0, typeorm_1.Entity)({ name: 'payments' })
 ], Payment);

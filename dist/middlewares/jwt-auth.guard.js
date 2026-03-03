@@ -17,11 +17,16 @@ let JwtAuthGuard = class JwtAuthGuard {
             throw new common_1.UnauthorizedException('Missing authorization token');
         }
         const token = authHeader.split(' ')[1];
-        const payload = (0, jwt_1.verifyToken)(token);
-        request.user = {
-            id: payload.sub,
-            role: payload.role,
-        };
+        try {
+            const payload = (0, jwt_1.verifyToken)(token);
+            request.user = {
+                id: payload.sub,
+                role: payload.role,
+            };
+        }
+        catch (_a) {
+            throw new common_1.UnauthorizedException('Invalid or expired token');
+        }
         return true;
     }
 };

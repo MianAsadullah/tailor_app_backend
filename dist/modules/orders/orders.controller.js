@@ -36,11 +36,44 @@ let OrdersController = class OrdersController {
     updateStatus(id, dto) {
         return this.ordersService.updateStatus(id, dto);
     }
+    assignTailor(id, tailorId) {
+        return this.ordersService.assignTailor(id, tailorId);
+    }
+    changeDeliveryDate(id, deliveryDate) {
+        return this.ordersService.changeDeliveryDate(id, deliveryDate);
+    }
+    timeline(id) {
+        return this.ordersService.timeline(id);
+    }
+    findByCustomer(customerId) {
+        return this.ordersService.findByCustomer(customerId);
+    }
+    findByTailor(tailorId) {
+        return this.ordersService.findByTailor(tailorId);
+    }
     update(id, dto) {
         return this.ordersService.update(id, dto);
     }
     remove(id) {
         return this.ordersService.remove(id);
+    }
+    repeat(id) {
+        return this.ordersService.repeatOrder(id);
+    }
+    repeatByParam(orderId) {
+        return this.ordersService.repeatOrder(orderId);
+    }
+    cancel(id) {
+        return this.ordersService.cancel(id);
+    }
+    estimatePrice(dressType, complexity) {
+        return this.ordersService.estimatePrice({ dressType, complexity });
+    }
+    bulkUpdateStatus(orderIds, status) {
+        return this.ordersService.bulkUpdateStatus(orderIds, status);
+    }
+    bulkAssign(orderIds, tailorId) {
+        return this.ordersService.bulkAssign(orderIds, tailorId);
     }
 };
 exports.OrdersController = OrdersController;
@@ -73,6 +106,43 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], OrdersController.prototype, "updateStatus", null);
 __decorate([
+    (0, common_1.Patch)(':id/assign-tailor'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)('tailorId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], OrdersController.prototype, "assignTailor", null);
+__decorate([
+    (0, common_1.Patch)(':id/change-delivery-date'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)('deliveryDate')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], OrdersController.prototype, "changeDeliveryDate", null);
+__decorate([
+    (0, common_1.Get)(':id/timeline'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], OrdersController.prototype, "timeline", null);
+__decorate([
+    (0, common_1.Get)('customer/:customerId'),
+    __param(0, (0, common_1.Param)('customerId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], OrdersController.prototype, "findByCustomer", null);
+__decorate([
+    (0, common_1.Get)('tailor/:tailorId'),
+    __param(0, (0, common_1.Param)('tailorId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], OrdersController.prototype, "findByTailor", null);
+__decorate([
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
@@ -87,6 +157,51 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], OrdersController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Post)(':id/repeat'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], OrdersController.prototype, "repeat", null);
+__decorate([
+    (0, common_1.Post)('repeat/:orderId'),
+    __param(0, (0, common_1.Param)('orderId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], OrdersController.prototype, "repeatByParam", null);
+__decorate([
+    (0, common_1.Post)('cancel/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], OrdersController.prototype, "cancel", null);
+__decorate([
+    (0, common_1.Post)('estimate-price'),
+    __param(0, (0, common_1.Body)('dressType')),
+    __param(1, (0, common_1.Body)('complexity')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], OrdersController.prototype, "estimatePrice", null);
+__decorate([
+    (0, common_1.Post)('bulk-update-status'),
+    __param(0, (0, common_1.Body)('orderIds')),
+    __param(1, (0, common_1.Body)('status')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Array, String]),
+    __metadata("design:returntype", void 0)
+], OrdersController.prototype, "bulkUpdateStatus", null);
+__decorate([
+    (0, common_1.Post)('bulk-assign'),
+    __param(0, (0, common_1.Body)('orderIds')),
+    __param(1, (0, common_1.Body)('tailorId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Array, String]),
+    __metadata("design:returntype", void 0)
+], OrdersController.prototype, "bulkAssign", null);
 exports.OrdersController = OrdersController = __decorate([
     (0, swagger_1.ApiTags)('orders'),
     (0, swagger_1.ApiBearerAuth)(),

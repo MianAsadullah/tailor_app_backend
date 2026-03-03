@@ -45,6 +45,27 @@ let PaymentsService = class PaymentsService {
         });
         return this.paymentsRepo.save(payment);
     }
+    async createIntent(orderId, amount, method) {
+        const order = await this.ordersRepo.findOne({ where: { id: orderId } });
+        if (!order)
+            throw new common_1.NotFoundException('Order not found');
+        const clientSecret = `mock_client_secret_${Date.now()}`;
+        return { clientSecret, amount, method, orderId };
+    }
+    async confirm(transactionId) {
+        const payment = await this.paymentsRepo.findOne({
+            where: { transactionId },
+            relations: ['order'],
+        });
+        if (!payment) {
+            throw new common_1.NotFoundException('Payment not found');
+        }
+        payment.status = 'paid';
+        await this.paymentsRepo.save(payment);
+        payment.order.isPaid = true;
+        await this.ordersRepo.save(payment.order);
+        return { success: true };
+    }
     async findByOrder(orderId) {
         const order = await this.ordersRepo.findOne({ where: { id: orderId } });
         if (!order)
@@ -76,6 +97,44 @@ let PaymentsService = class PaymentsService {
             await this.ordersRepo.save(payment.order);
         }
         return { received: true, handled: true };
+    }
+    async analytics() {
+        const total = await this.paymentsRepo.count();
+        const paid = await this.paymentsRepo.count({ where: { status: 'paid' } });
+        const refunded = await this.paymentsRepo.count({
+            where: { status: 'failed' },
+        });
+        const revenueRaw = await this.paymentsRepo
+            .createQueryBuilder('payment')
+            .select('SUM(payment.amount)', 'revenue')
+            .where('payment.status = :status', { status: 'paid' })
+            .getRawOne();
+        const revenue = (revenueRaw === null || revenueRaw === void 0 ? void 0 : revenueRaw.revenue) ? Number(revenueRaw.revenue) : 0;
+        return { total, paid, refunded, revenue };
+    }
+    async refund(transactionId) {
+        const payment = await this.paymentsRepo.findOne({
+            where: { transactionId },
+            relations: ['order'],
+        });
+        if (!payment) {
+            throw new common_1.NotFoundException('Payment not found');
+        }
+        payment.status = 'failed';
+        await this.paymentsRepo.save(payment);
+        payment.order.isPaid = false;
+        await this.ordersRepo.save(payment.order);
+        return { success: true };
+    }
+    async earningsForTailor(tailorId) {
+        const raw = await this.ordersRepo
+            .createQueryBuilder('order')
+            .select('SUM(order.price)', 'earnings')
+            .where('order.tailorId = :tailorId', { tailorId })
+            .andWhere('order.isPaid = true')
+            .getRawOne();
+        const earnings = (raw === null || raw === void 0 ? void 0 : raw.earnings) ? Number(raw.earnings) : 0;
+        return { tailorId, earnings };
     }
 };
 exports.PaymentsService = PaymentsService;

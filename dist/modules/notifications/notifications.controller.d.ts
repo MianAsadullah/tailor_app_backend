@@ -7,4 +7,17 @@ export declare class NotificationsController {
     markRead(id: string, req: AuthRequest): Promise<{
         success: boolean;
     }>;
+    markAll(req: AuthRequest): Promise<{
+        success: boolean;
+    }>;
+    remove(id: string, req: AuthRequest): Promise<{
+        success: boolean;
+    }>;
+    send(req: AuthRequest, userId: string, title: string, message: string): Promise<import("./notification.entity").Notification>;
+    unreadCount(req: AuthRequest): Promise<{
+        count: number;
+    }>;
+    broadcast(req: AuthRequest, title: string, message: string): Promise<{
+        success: boolean;
+    }>;
 }

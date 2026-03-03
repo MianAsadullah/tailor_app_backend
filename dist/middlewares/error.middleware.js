@@ -9,15 +9,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AllExceptionsFilter = void 0;
 const common_1 = require("@nestjs/common");
 let AllExceptionsFilter = class AllExceptionsFilter {
+    constructor() {
+        this.logger = new common_1.Logger('Exceptions');
+    }
     catch(exception, host) {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse();
+        const request = ctx.getRequest();
         const status = exception instanceof common_1.HttpException
             ? exception.getStatus()
             : common_1.HttpStatus.INTERNAL_SERVER_ERROR;
         const message = exception instanceof common_1.HttpException
             ? exception.getResponse()
             : 'Internal server error';
+        this.logger.error(`Error ${status} on ${request === null || request === void 0 ? void 0 : request.method} ${request === null || request === void 0 ? void 0 : request.url} - ${JSON.stringify(message)}`, exception === null || exception === void 0 ? void 0 : exception.stack);
         response.status(status).json({
             statusCode: status,
             message,

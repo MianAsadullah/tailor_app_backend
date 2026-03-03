@@ -7,6 +7,13 @@ export declare class User {
     passwordHash: string;
     role: UserRole;
     isActive: boolean;
+    passwordResetToken: string | null;
+    passwordResetExpiresAt: Date | null;
+    isEmailVerified: boolean;
+    emailVerificationToken: string | null;
+    twoFactorEnabled: boolean;
+    twoFactorSecret: string | null;
     createdAt: Date;
     updatedAt: Date;
+    deletedAt: Date | null;
 }

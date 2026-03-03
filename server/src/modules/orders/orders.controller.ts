@@ -45,6 +45,37 @@ export class OrdersController {
     return this.ordersService.updateStatus(id, dto);
   }
 
+  @Patch(':id/assign-tailor')
+  assignTailor(
+    @Param('id') id: string,
+    @Body('tailorId') tailorId: string,
+  ) {
+    return this.ordersService.assignTailor(id, tailorId);
+  }
+
+  @Patch(':id/change-delivery-date')
+  changeDeliveryDate(
+    @Param('id') id: string,
+    @Body('deliveryDate') deliveryDate: string | null,
+  ) {
+    return this.ordersService.changeDeliveryDate(id, deliveryDate);
+  }
+
+  @Get(':id/timeline')
+  timeline(@Param('id') id: string) {
+    return this.ordersService.timeline(id);
+  }
+
+  @Get('customer/:customerId')
+  findByCustomer(@Param('customerId') customerId: string) {
+    return this.ordersService.findByCustomer(customerId);
+  }
+
+  @Get('tailor/:tailorId')
+  findByTailor(@Param('tailorId') tailorId: string) {
+    return this.ordersService.findByTailor(tailorId);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateOrderDto) {
     return this.ordersService.update(id, dto);
@@ -53,6 +84,45 @@ export class OrdersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.ordersService.remove(id);
+  }
+
+  @Post(':id/repeat')
+  repeat(@Param('id') id: string) {
+    return this.ordersService.repeatOrder(id);
+  }
+
+  @Post('repeat/:orderId')
+  repeatByParam(@Param('orderId') orderId: string) {
+    return this.ordersService.repeatOrder(orderId);
+  }
+
+  @Post('cancel/:id')
+  cancel(@Param('id') id: string) {
+    return this.ordersService.cancel(id);
+  }
+
+  @Post('estimate-price')
+  estimatePrice(
+    @Body('dressType') dressType: string,
+    @Body('complexity') complexity?: 'low' | 'medium' | 'high',
+  ) {
+    return this.ordersService.estimatePrice({ dressType, complexity });
+  }
+
+  @Post('bulk-update-status')
+  bulkUpdateStatus(
+    @Body('orderIds') orderIds: string[],
+    @Body('status') status: string,
+  ) {
+    return this.ordersService.bulkUpdateStatus(orderIds, status as any);
+  }
+
+  @Post('bulk-assign')
+  bulkAssign(
+    @Body('orderIds') orderIds: string[],
+    @Body('tailorId') tailorId: string,
+  ) {
+    return this.ordersService.bulkAssign(orderIds, tailorId);
   }
 }
 

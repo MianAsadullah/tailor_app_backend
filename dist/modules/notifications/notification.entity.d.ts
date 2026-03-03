@@ -6,4 +6,5 @@ export declare class Notification {
     message: string;
     isRead: boolean;
     createdAt: Date;
+    deletedAt: Date | null;
 }

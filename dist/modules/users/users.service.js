@@ -45,12 +45,47 @@ let UsersService = class UsersService {
         return this.toSafeUser(saved);
     }
     async remove(id) {
+        const result = await this.usersRepo.softDelete({ id });
+        if (!result.affected) {
+            throw new common_1.NotFoundException('User not found');
+        }
+        return { success: true };
+    }
+    async updateRole(id, role) {
         const user = await this.usersRepo.findOne({ where: { id } });
         if (!user) {
             throw new common_1.NotFoundException('User not found');
         }
-        await this.usersRepo.remove(user);
-        return { success: true };
+        user.role = role;
+        const saved = await this.usersRepo.save(user);
+        return this.toSafeUser(saved);
+    }
+    async updateStatus(id, isActive) {
+        const user = await this.usersRepo.findOne({ where: { id } });
+        if (!user) {
+            throw new common_1.NotFoundException('User not found');
+        }
+        user.isActive = isActive;
+        const saved = await this.usersRepo.save(user);
+        return this.toSafeUser(saved);
+    }
+    async stats() {
+        const total = await this.usersRepo.count();
+        const active = await this.usersRepo.count({ where: { isActive: true } });
+        const byRole = await this.usersRepo
+            .createQueryBuilder('user')
+            .select('user.role', 'role')
+            .addSelect('COUNT(*)', 'count')
+            .groupBy('user.role')
+            .getRawMany();
+        return { total, active, byRole };
+    }
+    async activityLog() {
+        const recent = await this.usersRepo.find({
+            order: { updatedAt: 'DESC' },
+            take: 20,
+        });
+        return recent.map((u) => this.toSafeUser(u));
     }
     toSafeUser(user) {
         const { passwordHash, ...rest } = user;

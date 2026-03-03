@@ -39,6 +39,10 @@ __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], Measurement.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)(),
+    __metadata("design:type", Object)
+], Measurement.prototype, "deletedAt", void 0);
 exports.Measurement = Measurement = __decorate([
     (0, typeorm_1.Entity)({ name: 'measurements' })
 ], Measurement);

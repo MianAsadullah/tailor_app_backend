@@ -11,4 +11,21 @@ export declare class ShopsController {
     remove(id: string): Promise<{
         success: boolean;
     }>;
+    analytics(id: string): Promise<{
+        totalOrders: number;
+        completedOrders: number;
+        pendingOrders: number;
+        revenue: number;
+    }>;
+    updateSettings(id: string, settings: Record<string, unknown>): Promise<import("./shop.entity").Shop>;
+    inviteTailor(id: string, tailorId: string): Promise<{
+        success: boolean;
+    }>;
+    members(id: string): Promise<{
+        owner: import("../users/user.entity").User;
+        members: import("../users/user.entity").User[];
+    }>;
+    removeMember(id: string, userId: string): Promise<{
+        success: boolean;
+    }>;
 }

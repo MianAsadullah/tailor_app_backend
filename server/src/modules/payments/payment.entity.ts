@@ -1,6 +1,7 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -8,7 +9,7 @@ import {
 import { Order } from '../orders/order.entity';
 import { User } from '../users/user.entity';
 
-export type PaymentMethod = 'cash' | 'stripe' | 'jazzcash';
+export type PaymentMethod = 'cash' | 'stripe' | 'jazzcash' | 'easypaisa';
 export type PaymentStatus = 'pending' | 'paid' | 'failed';
 
 @Entity({ name: 'payments' })
@@ -36,5 +37,8 @@ export class Payment {
 
   @CreateDateColumn()
   createdAt!: Date;
+
+  @DeleteDateColumn()
+  deletedAt!: Date | null;
 }
 

@@ -18,10 +18,12 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const shop_entity_1 = require("./shop.entity");
 const user_entity_1 = require("../users/user.entity");
+const order_entity_1 = require("../orders/order.entity");
 let ShopsService = class ShopsService {
-    constructor(shopsRepo, usersRepo) {
+    constructor(shopsRepo, usersRepo, ordersRepo) {
         this.shopsRepo = shopsRepo;
         this.usersRepo = usersRepo;
+        this.ordersRepo = ordersRepo;
     }
     async create(dto) {
         var _a, _b;
@@ -46,7 +48,7 @@ let ShopsService = class ShopsService {
     async findOne(id) {
         const shop = await this.shopsRepo.findOne({
             where: { id },
-            relations: ['owner'],
+            relations: ['owner', 'members'],
         });
         if (!shop) {
             throw new common_1.NotFoundException('Shop not found');
@@ -78,11 +80,85 @@ let ShopsService = class ShopsService {
         return this.shopsRepo.save(shop);
     }
     async remove(id) {
+        const result = await this.shopsRepo.softDelete({ id });
+        if (!result.affected) {
+            throw new common_1.NotFoundException('Shop not found');
+        }
+        return { success: true };
+    }
+    async analytics(id) {
         const shop = await this.shopsRepo.findOne({ where: { id } });
         if (!shop) {
             throw new common_1.NotFoundException('Shop not found');
         }
-        await this.shopsRepo.remove(shop);
+        const totalOrders = await this.ordersRepo.count({ where: { shop: { id } } });
+        const completedOrders = await this.ordersRepo.count({
+            where: { shop: { id }, status: 'delivered' },
+        });
+        const pendingOrders = await this.ordersRepo.count({
+            where: { shop: { id }, status: 'pending' },
+        });
+        const revenueRaw = await this.ordersRepo
+            .createQueryBuilder('order')
+            .select('SUM(order.price)', 'revenue')
+            .where('order.shopId = :id', { id })
+            .andWhere('order.isPaid = true')
+            .getRawOne();
+        const revenue = (revenueRaw === null || revenueRaw === void 0 ? void 0 : revenueRaw.revenue) ? Number(revenueRaw.revenue) : 0;
+        return {
+            totalOrders,
+            completedOrders,
+            pendingOrders,
+            revenue,
+        };
+    }
+    async updateSettings(id, settings) {
+        const shop = await this.shopsRepo.findOne({ where: { id } });
+        if (!shop) {
+            throw new common_1.NotFoundException('Shop not found');
+        }
+        shop.settings = { ...(shop.settings || {}), ...settings };
+        return this.shopsRepo.save(shop);
+    }
+    async inviteTailor(id, tailorId) {
+        const shop = await this.shopsRepo.findOne({
+            where: { id },
+            relations: ['members'],
+        });
+        if (!shop) {
+            throw new common_1.NotFoundException('Shop not found');
+        }
+        const tailor = await this.usersRepo.findOne({ where: { id: tailorId } });
+        if (!tailor) {
+            throw new common_1.NotFoundException('Tailor not found');
+        }
+        shop.members = [...(shop.members || []), tailor];
+        await this.shopsRepo.save(shop);
+        return { success: true };
+    }
+    async members(id) {
+        const shop = await this.shopsRepo.findOne({
+            where: { id },
+            relations: ['owner', 'members'],
+        });
+        if (!shop) {
+            throw new common_1.NotFoundException('Shop not found');
+        }
+        return {
+            owner: shop.owner,
+            members: shop.members || [],
+        };
+    }
+    async removeMember(id, userId) {
+        const shop = await this.shopsRepo.findOne({
+            where: { id },
+            relations: ['members'],
+        });
+        if (!shop) {
+            throw new common_1.NotFoundException('Shop not found');
+        }
+        shop.members = (shop.members || []).filter((m) => m.id !== userId);
+        await this.shopsRepo.save(shop);
         return { success: true };
     }
 };
@@ -91,7 +167,9 @@ exports.ShopsService = ShopsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(shop_entity_1.Shop)),
     __param(1, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
+    __param(2, (0, typeorm_1.InjectRepository)(order_entity_1.Order)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository])
 ], ShopsService);
 //# sourceMappingURL=shops.service.js.map

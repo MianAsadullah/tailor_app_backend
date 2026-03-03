@@ -44,9 +44,22 @@ __decorate([
     __metadata("design:type", Boolean)
 ], Shop.prototype, "isActive", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true }),
+    __metadata("design:type", Object)
+], Shop.prototype, "settings", void 0);
+__decorate([
+    (0, typeorm_1.ManyToMany)(() => user_entity_1.User),
+    (0, typeorm_1.JoinTable)({ name: 'shop_members' }),
+    __metadata("design:type", Array)
+], Shop.prototype, "members", void 0);
+__decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], Shop.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)(),
+    __metadata("design:type", Object)
+], Shop.prototype, "deletedAt", void 0);
 exports.Shop = Shop = __decorate([
     (0, typeorm_1.Entity)({ name: 'shops' })
 ], Shop);

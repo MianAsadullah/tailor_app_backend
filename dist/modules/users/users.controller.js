@@ -27,6 +27,20 @@ let UsersController = class UsersController {
         const role = (_b = (_a = req.user) === null || _a === void 0 ? void 0 : _a.role) !== null && _b !== void 0 ? _b : 'customer';
         return this.usersService.findAll(role);
     }
+    async stats(req) {
+        var _a;
+        if (((_a = req.user) === null || _a === void 0 ? void 0 : _a.role) !== 'admin') {
+            throw new common_1.ForbiddenException('Only admin can view stats');
+        }
+        return this.usersService.stats();
+    }
+    async activityLog(req) {
+        var _a;
+        if (((_a = req.user) === null || _a === void 0 ? void 0 : _a.role) !== 'admin') {
+            throw new common_1.ForbiddenException('Only admin can view activity log');
+        }
+        return this.usersService.activityLog();
+    }
     async findOne(id) {
         return this.usersService.findOne(id);
     }
@@ -35,6 +49,20 @@ let UsersController = class UsersController {
     }
     async remove(id) {
         return this.usersService.remove(id);
+    }
+    async updateRole(req, id, role) {
+        var _a;
+        if (((_a = req.user) === null || _a === void 0 ? void 0 : _a.role) !== 'admin') {
+            throw new common_1.ForbiddenException('Only admin can change roles');
+        }
+        return this.usersService.updateRole(id, role);
+    }
+    async updateStatus(req, id, isActive) {
+        var _a;
+        if (((_a = req.user) === null || _a === void 0 ? void 0 : _a.role) !== 'admin') {
+            throw new common_1.ForbiddenException('Only admin can change status');
+        }
+        return this.usersService.updateStatus(id, isActive);
     }
 };
 exports.UsersController = UsersController;
@@ -45,6 +73,20 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('stats'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "stats", null);
+__decorate([
+    (0, common_1.Get)('activity-log'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "activityLog", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
@@ -67,6 +109,24 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Patch)(':id/role'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id')),
+    __param(2, (0, common_1.Body)('role')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateRole", null);
+__decorate([
+    (0, common_1.Patch)(':id/status'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id')),
+    __param(2, (0, common_1.Body)('isActive')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, Boolean]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateStatus", null);
 exports.UsersController = UsersController = __decorate([
     (0, swagger_1.ApiTags)('users'),
     (0, swagger_1.ApiBearerAuth)(),

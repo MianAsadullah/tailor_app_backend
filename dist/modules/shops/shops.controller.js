@@ -38,6 +38,21 @@ let ShopsController = class ShopsController {
     remove(id) {
         return this.shopsService.remove(id);
     }
+    analytics(id) {
+        return this.shopsService.analytics(id);
+    }
+    updateSettings(id, settings) {
+        return this.shopsService.updateSettings(id, settings);
+    }
+    inviteTailor(id, tailorId) {
+        return this.shopsService.inviteTailor(id, tailorId);
+    }
+    members(id) {
+        return this.shopsService.members(id);
+    }
+    removeMember(id, userId) {
+        return this.shopsService.removeMember(id, userId);
+    }
 };
 exports.ShopsController = ShopsController;
 __decorate([
@@ -75,6 +90,44 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], ShopsController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Get)(':id/analytics'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ShopsController.prototype, "analytics", null);
+__decorate([
+    (0, common_1.Patch)(':id/settings'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], ShopsController.prototype, "updateSettings", null);
+__decorate([
+    (0, common_1.Post)(':id/invite-tailor'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)('tailorId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], ShopsController.prototype, "inviteTailor", null);
+__decorate([
+    (0, common_1.Get)(':id/members'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ShopsController.prototype, "members", null);
+__decorate([
+    (0, common_1.Delete)(':id/members/:userId'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Param)('userId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], ShopsController.prototype, "removeMember", null);
 exports.ShopsController = ShopsController = __decorate([
     (0, swagger_1.ApiTags)('shops'),
     (0, swagger_1.ApiBearerAuth)(),
