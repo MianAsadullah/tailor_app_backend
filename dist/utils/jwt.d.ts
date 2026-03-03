@@ -1,0 +1,6 @@
+export interface JwtPayload {
+    sub: string;
+    role: string;
+}
+export declare const signToken: (payload: JwtPayload) => string;
+export declare const verifyToken: (token: string) => JwtPayload;
