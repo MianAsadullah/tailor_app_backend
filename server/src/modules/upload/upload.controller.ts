@@ -10,6 +10,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { unlink } from 'fs/promises';
+import { mkdirSync } from 'fs';
 import { tmpdir } from 'os';
 
 function filenameGenerator(
@@ -22,7 +23,10 @@ function filenameGenerator(
   cb(null, `${uniqueSuffix}${ext}`);
 }
 
-const UPLOAD_DIR = join(tmpdir(), 'tailor-uploads');
+const isDevelopment = process.env.NODE_ENV !== 'production';
+const LOCAL_UPLOAD_DIR = join(process.cwd(), 'uploads');
+const TMP_UPLOAD_DIR = join(tmpdir(), 'tailor-uploads');
+const UPLOAD_DIR = isDevelopment ? LOCAL_UPLOAD_DIR : TMP_UPLOAD_DIR;
 
 @Controller('upload')
 export class UploadController {
@@ -32,7 +36,6 @@ export class UploadController {
       storage: diskStorage({
         destination: (_req, _file, cb) => {
           try {
-            const { mkdirSync } = require('fs');
             mkdirSync(UPLOAD_DIR, { recursive: true });
             cb(null, UPLOAD_DIR);
           } catch (e) {
@@ -52,7 +55,9 @@ export class UploadController {
   uploadImage(@UploadedFile() file: Express.Multer.File) {
     return {
       filename: file.filename,
-      path: `${UPLOAD_DIR}/${file.filename}`,
+      path: isDevelopment
+        ? `/uploads/${file.filename}`
+        : `${UPLOAD_DIR}/${file.filename}`,
       originalName: file.originalname,
     };
   }
