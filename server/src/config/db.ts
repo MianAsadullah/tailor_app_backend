@@ -1,15 +1,47 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-export const getTypeOrmConfig = (): TypeOrmModuleOptions => ({
-  type: 'postgres',
-  host: String(process.env.DB_HOST || 'localhost'),
-  port: parseInt(String(process.env.DB_PORT || '5432'), 10),
-  username: String(process.env.DB_USER || 'postgres'),
-  password: String(process.env.DB_PASSWORD ?? ''),
-  database: String(process.env.DB_NAME || 'postgres'),
-  autoLoadEntities: true,
-  synchronize: true,
-});
+function parseDatabaseUrl(urlString: string): Partial<TypeOrmModuleOptions> {
+  const url = new URL(urlString);
+
+  if (!url.hostname || !url.pathname) {
+    throw new Error('Invalid DATABASE_URL: missing host or database name');
+  }
+
+  return {
+    host: url.hostname,
+    port: Number(url.port || 5432),
+    username: url.username || undefined,
+    password: url.password || undefined,
+    database: url.pathname.replace(/^\//, ''),
+    ssl: url.searchParams.has('sslmode')
+      ? { rejectUnauthorized: url.searchParams.get('sslmode') !== 'disable' }
+      : undefined,
+  };
+}
+
+export const getTypeOrmConfig = (): TypeOrmModuleOptions => {
+  const commonOptions: Partial<TypeOrmModuleOptions> = {
+    type: 'postgres',
+    autoLoadEntities: true,
+    synchronize: true,
+  };
+
+  if (process.env.DATABASE_URL) {
+    return {
+      ...commonOptions,
+      ...parseDatabaseUrl(process.env.DATABASE_URL),
+    } as TypeOrmModuleOptions;
+  }
+
+  return {
+    ...commonOptions,
+    host: String(process.env.DB_HOST || 'localhost'),
+    port: parseInt(String(process.env.DB_PORT || '5432'), 10),
+    username: String(process.env.DB_USER || 'postgres'),
+    password: String(process.env.DB_PASSWORD ?? ''),
+    database: String(process.env.DB_NAME || 'postgres'),
+  } as TypeOrmModuleOptions;
+};
 
 
 
