@@ -8,8 +8,9 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { extname, join } from 'path';
 import { unlink } from 'fs/promises';
+import { tmpdir } from 'os';
 
 function filenameGenerator(
   _req: unknown,
@@ -21,13 +22,23 @@ function filenameGenerator(
   cb(null, `${uniqueSuffix}${ext}`);
 }
 
+const UPLOAD_DIR = join(tmpdir(), 'tailor-uploads');
+
 @Controller('upload')
 export class UploadController {
   @Post('image')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: './uploads',
+        destination: (_req, _file, cb) => {
+          try {
+            const { mkdirSync } = require('fs');
+            mkdirSync(UPLOAD_DIR, { recursive: true });
+            cb(null, UPLOAD_DIR);
+          } catch (e) {
+            cb(e as Error, UPLOAD_DIR);
+          }
+        },
         filename: filenameGenerator,
       }),
       fileFilter: (_req, file, cb) => {
@@ -41,7 +52,7 @@ export class UploadController {
   uploadImage(@UploadedFile() file: Express.Multer.File) {
     return {
       filename: file.filename,
-      path: `/uploads/${file.filename}`,
+      path: `${UPLOAD_DIR}/${file.filename}`,
       originalName: file.originalname,
     };
   }
@@ -52,7 +63,7 @@ export class UploadController {
       return { success: false };
     }
     try {
-      await unlink(`./uploads/${filename}`);
+      await unlink(join(UPLOAD_DIR, filename));
       return { success: true };
     } catch {
       return { success: false };
