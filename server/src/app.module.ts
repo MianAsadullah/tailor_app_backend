@@ -14,29 +14,31 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { SystemController } from './modules/system/system.controller';
 import { UploadController } from './modules/upload/upload.controller';
 
+const dbEnabled = Boolean(process.env.DATABASE_URL || process.env.DB_HOST);
+
 const importsArray = [
   ConfigModule.forRoot({
     isGlobal: true,
     load: [env],
   }),
-  // Only initialize TypeORM if database configuration is present.
-  // This prevents serverless function invocations from failing
-  // when no DB is configured in the environment (e.g., preview deployments).
-  ...(process.env.DATABASE_URL || process.env.DB_HOST
+  // Only include TypeORM and DB-dependent modules when a database is configured.
+  // This prevents serverless function invocations from failing in preview
+  // deployments where no DB is available.
+  ...(dbEnabled
     ? [
         TypeOrmModule.forRootAsync({
           useFactory: () => getTypeOrmConfig(),
         }),
+        AuthModule,
+        UsersModule,
+        ShopsModule,
+        MeasurementsModule,
+        OrdersModule,
+        PaymentsModule,
+        NotificationsModule,
+        AnalyticsModule,
       ]
     : []),
-  AuthModule,
-  UsersModule,
-  ShopsModule,
-  MeasurementsModule,
-  OrdersModule,
-  PaymentsModule,
-  NotificationsModule,
-  AnalyticsModule,
 ];
 
 @Module({
