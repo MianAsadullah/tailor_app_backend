@@ -23,7 +23,10 @@ export const getTypeOrmConfig = (): TypeOrmModuleOptions => {
   const commonOptions: Partial<TypeOrmModuleOptions> = {
     type: 'postgres',
     autoLoadEntities: true,
-    synchronize: true,
+    // Enable synchronize only in non-production environments to avoid
+    // accidental schema changes on production databases that can
+    // cause runtime failures during serverless cold starts.
+    synchronize: process.env.NODE_ENV !== 'production',
   };
 
   if (process.env.DATABASE_URL) {

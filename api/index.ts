@@ -6,6 +6,15 @@ import { AllExceptionsFilter } from '../server/src/middlewares/error.middleware'
 
 let cachedApp: any;
 
+// Process-level handlers to ensure unhandled errors are logged in Vercel logs.
+process.on('unhandledRejection', (reason: any) => {
+  console.error('Unhandled Rejection at:', reason && reason.stack ? reason.stack : reason);
+});
+
+process.on('uncaughtException', (err: any) => {
+  console.error('Uncaught Exception:', err && err.stack ? err.stack : err);
+});
+
 export default async function handler(req: any, res: any) {
   try {
     if (!cachedApp) {
@@ -26,9 +35,9 @@ export default async function handler(req: any, res: any) {
     }
 
     return cachedApp(req, res);
-  } catch (err) {
+  } catch (err: any) {
     // Surface initialization/runtime errors to Vercel logs
-    console.error('Handler error:', err);
+    console.error('Handler error:', err && err.stack ? err.stack : err);
     try {
       res.statusCode = 500;
       res.setHeader('Content-Type', 'application/json');
