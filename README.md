@@ -43,6 +43,30 @@ npm run start:dev
 
 The API will be available at `http://localhost:3000/api`.
 
+### Serverless deployment (Vercel)
+
+This project already includes a Vercel entrypoint and routing config for a serverless NestJS deployment:
+
+- [api/index.ts](api/index.ts) boots the Nest app once and serves it through a Vercel handler.
+- [vercel.json](vercel.json) routes all incoming requests to that handler.
+
+To deploy:
+
+1. Push the repository to GitHub.
+2. Import the project in Vercel.
+3. Set the environment variables from the example file (or your own production values).
+4. Deploy. The API will be available at the generated Vercel URL under `/api`.
+
+Example environment variables for Vercel:
+
+```env
+NODE_ENV=production
+PORT=3000
+DATABASE_URL=postgres://user:password@host:5432/dbname
+JWT_SECRET=super_secret_key
+JWT_EXPIRES_IN=1d
+```
+
 ### API documentation (Swagger)
 
 After the server is running, open:
