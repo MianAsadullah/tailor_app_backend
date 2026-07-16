@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from '../server/src/app.module';
 import { AllExceptionsFilter } from '../server/src/middlewares/error.middleware';
 
@@ -28,7 +29,18 @@ export default async function handler(req: any, res: any) {
           transform: true,
         }),
       );
-      app.setGlobalPrefix('api');
+      app.setGlobalPrefix('api', { exclude: ['/', 'health', 'config'] });
+
+      // Swagger setup so API docs are available in serverless handler
+      const config = new DocumentBuilder()
+        .setTitle('Tailor App API')
+        .setDescription('API documentation for Tailor backend')
+        .setVersion('1.0')
+        .addBearerAuth()
+        .build();
+
+      const document = SwaggerModule.createDocument(app, config);
+      SwaggerModule.setup('api/docs', app, document);
 
       await app.init();
       cachedApp = app.getHttpAdapter().getInstance();

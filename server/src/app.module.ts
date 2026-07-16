@@ -23,6 +23,8 @@ const databaseUrl = process.env.DATABASE_URL;
 const envDbHost = process.env.DB_HOST;
 
 const dbEnabled = (() => {
+  // Allow forcing DB-enabled mode (useful for local dev / docs)
+  if (process.env.FORCE_ENABLE_DB === '1') return true;
   // If no DB config exists, disable DB modules
   if (!databaseUrl && !envDbHost) return false;
 

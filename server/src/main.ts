@@ -10,7 +10,7 @@ async function bootstrap() {
 
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalInterceptors(new LoggingInterceptor());
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api', { exclude: ['/', 'health', 'config'] });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

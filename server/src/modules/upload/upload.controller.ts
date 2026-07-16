@@ -6,6 +6,7 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
@@ -28,6 +29,7 @@ const LOCAL_UPLOAD_DIR = join(process.cwd(), 'uploads');
 const TMP_UPLOAD_DIR = join(tmpdir(), 'tailor-uploads');
 const UPLOAD_DIR = isDevelopment ? LOCAL_UPLOAD_DIR : TMP_UPLOAD_DIR;
 
+@ApiTags('upload')
 @Controller('upload')
 export class UploadController {
   @Post('image')
