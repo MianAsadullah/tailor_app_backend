@@ -21,7 +21,6 @@ function parseDatabaseUrl(urlString: string): Partial<TypeOrmModuleOptions> {
 
 export const getTypeOrmConfig = (): TypeOrmModuleOptions => {
   const commonOptions: Partial<TypeOrmModuleOptions> = {
-    type: 'postgres',
     autoLoadEntities: true,
     // Enable synchronize only in non-production environments to avoid
     // accidental schema changes on production databases that can
@@ -32,17 +31,27 @@ export const getTypeOrmConfig = (): TypeOrmModuleOptions => {
   if (process.env.DATABASE_URL) {
     return {
       ...commonOptions,
+      type: 'postgres',
       ...parseDatabaseUrl(process.env.DATABASE_URL),
+    } as TypeOrmModuleOptions;
+  }
+
+  if (process.env.DB_HOST || process.env.DB_PORT || process.env.DB_USER || process.env.DB_PASSWORD || process.env.DB_NAME) {
+    return {
+      ...commonOptions,
+      type: 'postgres',
+      host: String(process.env.DB_HOST || 'localhost'),
+      port: parseInt(String(process.env.DB_PORT || '5432'), 10),
+      username: String(process.env.DB_USER || 'postgres'),
+      password: String(process.env.DB_PASSWORD ?? ''),
+      database: String(process.env.DB_NAME || 'postgres'),
     } as TypeOrmModuleOptions;
   }
 
   return {
     ...commonOptions,
-    host: String(process.env.DB_HOST || 'localhost'),
-    port: parseInt(String(process.env.DB_PORT || '5432'), 10),
-    username: String(process.env.DB_USER || 'postgres'),
-    password: String(process.env.DB_PASSWORD ?? ''),
-    database: String(process.env.DB_NAME || 'postgres'),
+    type: 'sqlite',
+    database: ':memory:',
   } as TypeOrmModuleOptions;
 };
 
