@@ -36,22 +36,14 @@ export const getTypeOrmConfig = (): TypeOrmModuleOptions => {
     } as TypeOrmModuleOptions;
   }
 
-  if (process.env.DB_HOST || process.env.DB_PORT || process.env.DB_USER || process.env.DB_PASSWORD || process.env.DB_NAME) {
-    return {
-      ...commonOptions,
-      type: 'postgres',
-      host: String(process.env.DB_HOST || 'localhost'),
-      port: parseInt(String(process.env.DB_PORT || '5432'), 10),
-      username: String(process.env.DB_USER || 'postgres'),
-      password: String(process.env.DB_PASSWORD ?? ''),
-      database: String(process.env.DB_NAME || 'postgres'),
-    } as TypeOrmModuleOptions;
-  }
-
   return {
     ...commonOptions,
-    type: 'sqlite',
-    database: ':memory:',
+    type: 'postgres',
+    host: String(process.env.DB_HOST || 'localhost'),
+    port: parseInt(String(process.env.DB_PORT || '5432'), 10),
+    username: String(process.env.DB_USER || 'postgres'),
+    password: String(process.env.DB_PASSWORD ?? ''),
+    database: String(process.env.DB_NAME || 'postgres'),
   } as TypeOrmModuleOptions;
 };
 
